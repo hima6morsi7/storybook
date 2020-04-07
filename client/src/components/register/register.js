@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import swal from "sweetalert";
 
-class Login extends Component {
+class Register extends Component {
+
   submitForm = (values, history) => {
     axios
-      .post("http://localhost:8080/login", values)
+      .post("http://localhost:8080/register", values)
       .then(res => {
         console.log(res.data.result);
         if (res.data.result === "success") {
@@ -35,7 +36,26 @@ class Login extends Component {
   }) => {
     return (
       <form onSubmit={handleSubmit}>
-
+      <div className="form-group has-feedback">
+        <input
+          type="text"
+          name="username"
+          onChange={handleChange}
+          value={values.username}
+          className="form-control"
+          placeholder="Username"
+          className={
+            errors.username && touched.username
+              ? "form-control is-invalid"
+              : "form-control"
+          }
+        />
+        {errors.username && touched.username ? (
+          <small id="passwordHelp" class="text-danger">
+            {errors.username}
+          </small>
+        ) : null}
+      </div>
       <div className="form-group has-feedback">
         <input
           type="text"
@@ -75,7 +95,24 @@ class Login extends Component {
           </small>
         ) : null}
       </div>
-     
+      <div className="form-group has-feedback">
+        <input
+          type="password"
+          name="confirm_password"
+          onChange={handleChange}
+          className={
+            errors.confirm_password && touched.confirm_password
+              ? "form-control is-invalid"
+              : "form-control"
+          }
+          placeholder="Confirm Password"
+        />
+        {errors.confirm_password && touched.confirm_password ? (
+          <small id="passwordHelp" class="text-danger">
+            {errors.confirm_password}
+          </small>
+        ) : null}
+      </div>
       <div className="row">
         <div className="col-md-12">
           <button
@@ -93,27 +130,36 @@ class Login extends Component {
   }
   render() {
     const SignupSchema = Yup.object().shape({
-     
+      username: Yup.string()
+        .min(2, "username is Too Short!")
+        .max(50, "username is Too Long!")
+        .required("username is Required"),
       email: Yup.string()
         .email("Invalid email")
         .required("Email is Required"),
-      password: Yup.string().required("Password is required")
+      password: Yup.string().required("Password is required"),
+      confirm_password: Yup.string().oneOf(
+        [Yup.ref("password"), null],
+        "Both password need to be the same"
+      )
     });
    
     
     return (
-      <div className="hold-transition login-page">
-      <div className="login-box">
-  <div className="login-logo">
+      <div className="hold-transition register-page">
+      <div className="register-box">
+  <div className="register-logo">
     <a href="../../index2.html"><b>Story</b>Book</a>
   </div>
   <div className="card">
-    <div className="card-body login-card-body">
-      <p className="login-box-msg">Login</p>
+    <div className="card-body register-card-body">
+      <p className="login-box-msg">Register a new membership</p>
       <Formik
         initialValues={{
+          fullname: "",
           email: "",
-          password: ""
+          password: "",
+          confirm_password: ""
         }}
         validationSchema={SignupSchema}
         onSubmit={(values, { setSubmitting }) => {
@@ -124,14 +170,15 @@ class Login extends Component {
         {props => this.showForm(props)}
       </Formik>
    
+      <a href="login.html" className="text-center">I already have a membership</a>
     </div>
     {/* /.form-box */}
   </div>{/* /.card */}
-  {/* /.login-box */}
+  {/* /.register-box */}
 </div>
 </div>
     );
   }
 }
 
-export default Login;
+export default Register;
