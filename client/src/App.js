@@ -1,25 +1,45 @@
 import React, { Component } from "react";
-import Header from "./components/header";
-import Sidebar from "./components/sidebar";
 import Footer from "./components/footer";
 import Dashboard from "./components/dashboard";
 import Register from "./components/register";
 import Login from "./components/login";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
+import { BrowserRouter as Router, Switch, Route,Redirect,withRouter } from "react-router-dom";
+
+const isLoggedIn = () => {
+  return localStorage.getItem("TOKEN_KEY") != null;
+};
+
+// Protected Route
+const SecuredRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      // ternary condition
+
+      isLoggedIn() === true ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to="/login" />
+      )
+    }
+  />
+);
 export default class App extends Component {
+  
   render() {
+    let props = this.props;   
     return (
       <Router>
-        <Switch>
-          <div>
-            <Header />
-            <Sidebar />
-            <Route path="/dashboard" component={Dashboard} />
+          <Switch>
+           <div>                     
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
+            <SecuredRoute path="/dashboard" component={Dashboard} />
             <Footer />
-          </div>
-        </Switch>
+           </div>
+           
+          </Switch>
       </Router>
     );
   }

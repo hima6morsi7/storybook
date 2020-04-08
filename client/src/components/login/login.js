@@ -4,16 +4,24 @@ import * as Yup from "yup";
 import axios from "axios";
 import swal from "sweetalert";
 
-class Login extends Component {
-  submitForm = (values, history) => {
+class Login extends Component { 
+  constructor(props){
+    super(props)
+  }
+  componentDidMount() {
+    if (localStorage.getItem("TOKEN_KEY") != null) {     
+        return this.props.history.push('/dashboard');
+     }
+   }
+   submitForm = (values, history) => {
     axios
       .post("http://localhost:8080/login", values)
       .then(res => {
-        console.log(res.data.result);
         if (res.data.result === "success") {
+          localStorage.setItem("TOKEN_KEY", res.data.token);
           swal("Success!", res.data.message, "success")
-          .then(value => {
-            history.push("/login");
+         .then(value  => {
+            history.push("/dashboard");
           });
         } else if (res.data.result === "error") {
           swal("Error!", res.data.message, "error");
@@ -21,9 +29,9 @@ class Login extends Component {
       })
       .catch(error => {
         console.log(error);
-        swal("Error!", "Unexpected error", "error");
+        swal("Error!", error, "error");
       });
-  }; 
+  };
   showForm = ({
     values,
     errors,

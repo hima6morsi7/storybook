@@ -1,0 +1,7 @@
+footer {
+    position: fixed; /* instead of absolute */
+    bottom: 0;
+    width:100vw;
+    /* left: 0; */
+    /* The rest of the styles */
+  }

@@ -143,7 +143,6 @@ class Register extends Component {
         "Both password need to be the same"
       )
     });
-   
     
     return (
       <div className="hold-transition register-page">
