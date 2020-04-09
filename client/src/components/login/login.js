@@ -15,7 +15,7 @@ class Login extends Component {
    }
    submitForm = (values, history) => {
     axios
-      .post("http://localhost:8080/login", values)
+      .post("http://localhost:8080/user/login", values)
       .then(res => {
         if (res.data.result === "success") {
           localStorage.setItem("TOKEN_KEY", res.data.token);

@@ -2,86 +2,53 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const bcrypt = require('bcrypt');
-const jwt = require("./jwt");
+const userRouter = require('./routes/user');
+const cookieParser = require('cookie-parser');
 
 require("./db");
-const Users = require("./models/user_schema");
 const Message = require("./models/message_schema");
-const io = require("socket.io")(http)
-
+const http = require('http');
+app.all('*',function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  if (req.method === 'OPTIONS') {
+      res.send(200);
+  }
+  else {
+      next();
+  }
+});
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use('/user', userRouter);
 
 const port = 8080;
 
-
-app.post("/register", async (req, res) => {
-  try {
-    req.body.password = await bcrypt.hash(req.body.password, 8);
-    await Users.create(req.body);
-    console.log("hello world");
-    res.json({ result: "success", message: "Register successfully" });
-  } catch (err) {
-    console.log(err)
-    res.json({ result: "error", message: err.errmsg });
-  }
+const server = app.listen(port, () => {
+  console.log("Server is running... on port " + port);
 });
-app.get("/dashboard", async (req, res) => {
-  try {
-    res.setHeader("Content-Type", "application/json");
-        res.statusCode  =  200;
-        connectdb.then(db  =>  {
-            Message.find({}).then(messages  =>  {
-            res.json(messages);
-            })
-          })
-  } catch (err) {
-    console.log(err)
-    res.json({ result: "error", message: err.errmsg });
-  }
-});
-app.post("/login", async (req, res) => {
-  let doc = await Users.findOne({ email: req.body.email });
-  if (doc) {
-    if (bcrypt.compareSync(req.body.password, doc.password)) {
-      const payload = {
-        id: doc._id,
-        level: doc.level,
-        username: doc.username
-      };
-
-      let token = jwt.sign(payload);
-      res.json({ result: "success", token, message: "Login successfully" });
-    } else {
-      // Invalid password
-      res.json({ result: "error", message: "Invalid password" });
-    }
-  } else {
-    // Invalid username
-    res.json({ result: "error", message: "Invalid username" });
-  }
-});
+const io = require("socket.io")(server);
 io.on("connection", socket => {
   console.log("user connected");
     socket.on("disconnect", function() {
     console.log("user disconnected");
     });  
-    socket.on("chat message", function(msg) {
-        console.log("message: "  +  msg);
-        //broadcast message to everyone in port:5000 except yourself.
-    socket.broadcast.emit("received", { message: msg  });
+    socket.on('sendmsg', async function(data) {
+      console.log(data)
+      const { from, message } = data;
+      console.log(message,from)
+      const chatid = [from].sort().join('_');
+      try {
+        await Message.create({ chatid, from, message });
+        io.emit('recvmsg', { chatid, from, message })
+       
+      } catch (err) {
+        console.log(err)
+        io.emit('errmsgmsg', err)        
+      }
 
-    //save chat to the database
-    connect.then(db  =>  {
-    console.log("connected correctly to the server");
-
-    let  meessage  =  new Message({ message: msg, sender: "Anonymous"});
-    meessage.save();
-    });
-    });
+  })
 })
-app.listen(port, () => {
-  console.log("Server is running... on port " + port);
-});

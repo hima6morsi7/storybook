@@ -12,7 +12,9 @@ and using axios for http requests and sweetalert for user validation messages an
 - creating chat and message components using socket
 - creating message schema and adding routes for chat and message
 and using socket to send and receive messages
-
+## creating all routes  for messages 
+adding all message routes and using jwt token to secure requests
+and fetching data in chat component
 ## how to run the app
 open terminal in the app folder
 add your database in db.js file
@@ -25,3 +27,5 @@ https://blog.soshace.com/create-a-simple-pos-with-react-node-and-mongodb-0-initi
 https://dev.to/sirwanafifi/websocket-and-react-58an 
 
 https://dev.to/rexeze/how-to-build-a-real-time-chat-app-with-nodejs-socketio-and-mongodb-2kho
+
+https://blog.soshace.com/create-a-simple-pos-with-react-node-and-mongodb-1-register-and-login-with-jwt/

@@ -18,7 +18,6 @@ class Dashboard extends Component {
       <Sidebar user={user} /> 
     <div className="wrapper">
      
-      {console.log("user is " + user)}
     {/* Content Wrapper. Contains page content */}
   <div className="content-wrapper">
     {/* Content Header (Page header) */}

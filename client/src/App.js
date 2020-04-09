@@ -3,7 +3,7 @@ import Footer from "./components/footer";
 import Dashboard from "./components/dashboard";
 import Register from "./components/register";
 import Login from "./components/login";
-
+import Chat from './components/chat'
 import { BrowserRouter as Router, Switch, Route,Redirect,withRouter } from "react-router-dom";
 
 const isLoggedIn = () => {
@@ -36,7 +36,8 @@ export default class App extends Component {
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
             <SecuredRoute path="/dashboard" component={Dashboard} />
-            <Footer />
+            <SecuredRoute path='/chat' component={Chat} />
+
            </div>
            
           </Switch>

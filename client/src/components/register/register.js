@@ -8,7 +8,7 @@ class Register extends Component {
 
   submitForm = (values, history) => {
     axios
-      .post("http://localhost:8080/register", values)
+      .post("http://localhost:8080/user/register", values)
       .then(res => {
         console.log(res.data.result);
         if (res.data.result === "success") {

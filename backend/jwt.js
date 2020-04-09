@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-var publicKEY = fs.readFileSync(path.join('./keys/server.pem'), 'utf8');
+const publicKEY = fs.readFileSync(path.join('./keys/server.pem'), 'utf8');
 // var privateKEY = fs.readFileSync(path.join(__dirname + 'https://soshace-12d3e.kxcdn.com/private.key'), 'utf8');
 var i 	= 'Krissio';    	// Issuer (Software organization who issues the token)
 var s 	= 'admin@kriss.io';	// Subject (intended user of the token)
@@ -14,7 +14,7 @@ module.exports = {
             subject: 	s,
             audience: 	a,
             expiresIn: "30d",    // 30 days validity
-            algorithm: "RS256"
+            algorithm: "RS256",
         };
         return jwt.sign(payload, publicKEY, signOptions);
     },
