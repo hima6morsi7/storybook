@@ -41,18 +41,20 @@ Router.get('/getmsglist', function(req, res) {
         })
     })
 })
-Router.post('/update', function(req, res) {
-    const username=req.cookies.username
-    const { from } = req.body;
-    // console.log(userid, from)
-    Chat.update({ from, to: userid }, { '$set': { read: true } }, { 'multi': true },
-
-        function(err, doc) {
-            if (!err) {
-                return res.json({ code: 0, num: doc.nModified })
-            }
-            return res.json({code: 1, msg:'modification failure'})
-        })
+Router.post('/update', async function(req, res) {
+    const { id,from,message } = req.body;
+    console.log(req.body)
+    const editMessage = {
+        message: message,
+        from,
+        id
+    };
+    const updatedMessage = await Chat.findByIdAndUpdate(id, editMessage, { new: true });
+    res.json({ code: 0, updatedMessage })    
+})
+Router.post('/delete', async function(req, res) {
+    const deletedMessage = await Chat.findByIdAndRemove(req.body);
+    res.json({ code: 0, deletedMessage })    
 })
 Router.post('/readmsg', function(req, res) {
     const userid = req.cookies.userid;

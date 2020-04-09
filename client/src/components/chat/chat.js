@@ -4,6 +4,8 @@ import "./chat.css";
 import Message from "../message";
 import socketIOClient from "socket.io-client";
 import jwt from 'jwt-decode';
+import Header from "../../components/header";
+import Sidebar from "../../components/sidebar"; 
 
 const socket = socketIOClient("ws://localhost:8080");
 
@@ -30,6 +32,7 @@ class Chat extends Component {
     if (uName) {
       this.setUserName(uName)
     }
+    
     axios
     .get("http://localhost:8080/user/getmsglist", { headers: { "Authorization" : `Bearer ${token}`} })
     .then(res => {
@@ -65,32 +68,59 @@ class Chat extends Component {
     });
   }
 
+  deleteMessage = async (msg) => {
+  const response = await axios
+    .post("http://localhost:8080/user/delete", msg)
+    if(response.data.code === 0){
+      console.log("deleted")
+      this.setState({ messages: this.state.messages.filter((message) => message._id !== msg._id) })
+    }
+    else{
+      console.log("server error")
+    }
+  }
 
+  editMessage = async (obj) => {
+    // let data={id, message, name}
+
+    const editedMessage =  await axios.post(`http://localhost:8080/user/update`, obj)
+    if(editedMessage.data.code === 0){
+      let indexOfEditedMessage = this.state.messages.findIndex(message => message._id === obj.id)
+console.log(indexOfEditedMessage)
+      this.setState({
+          messages: [...this.state.messages.slice(0,indexOfEditedMessage), editedMessage.data.updatedMessage, ...this.state.messages.slice(indexOfEditedMessage + 1)]
+      })    }
+    else{
+      console.log("server error")
+    }
+   
+  }
   render() {
-    
+    if(!localStorage.getItem("TOKEN_KEY")){
+      this.props.history.push('/login');
+    }
+    let  user = jwt(localStorage.getItem("TOKEN_KEY")) ;
     return (
+      <div>
+      <Header />
+      <Sidebar user={user} /> 
       <div className="wrapper">
+      <div className="content-wrapper">
         <div className="card border-primary">
           <h5 className="card-header bg-primary text-white">
             <i className="fas fa-comment"></i> Chat
           </h5>
           <div className="card-body overflow-auto">
-          {/* { (this.state.edit_message === message_user.id)
-                ? <MessageForm 
-                    key={message_user.id}
-                    id={message_user.id} 
-                    content={message_user.content} 
-                    editMessageChange={this.editMessageChange}
-                    newMessageChange={this.newMessageChange}
-                    hashtags={this.props.hashtags} 
-                />
-                : <span>{ ReactHtmlParser(message_user.content_with_link)} <br /></span>
-                } */}
+          
             {this.state.messages.map((msg, index) => (
               <Message
                 key={index}
-                userName={msg.username}
+                username={msg.from}
                 message={msg.message}
+                id={msg._id}
+                msg={msg}
+                deleteMessage={this.deleteMessage}
+                editMessage={this.editMessage}
               />
             ))}
           </div>
@@ -124,6 +154,9 @@ class Chat extends Component {
           </div>
         </div>
       </div>
+      </div>
+      </div>
+           
     )
   }
 
