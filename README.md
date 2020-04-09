@@ -15,6 +15,8 @@ and using socket to send and receive messages
 ## creating all routes  for messages 
 adding all message routes and using jwt token to secure requests
 and fetching data in chat component
+## creating edit and delete messages
+creating component for editing messages and updating and deleting messages in backend
 ## how to run the app
 open terminal in the app folder
 add your database in db.js file
@@ -29,3 +31,4 @@ https://dev.to/sirwanafifi/websocket-and-react-58an
 https://dev.to/rexeze/how-to-build-a-real-time-chat-app-with-nodejs-socketio-and-mongodb-2kho
 
 https://blog.soshace.com/create-a-simple-pos-with-react-node-and-mongodb-1-register-and-login-with-jwt/
+https://github.com/saramorell/react-message-board/tree/617f1601244285449e3b3e0773e2967e5a71e989
