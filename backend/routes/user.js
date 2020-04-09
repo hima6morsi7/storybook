@@ -33,7 +33,7 @@ Router.get('/getmsglist', function(req, res) {
             users[v._id] = { name: v.username,currentuser : false}
         })
         
-        Chat.find({ from: decoded.username }, function(err, doc) {
+        Chat.find({ }, function(err, doc) {
             // console.log(doc)
             if (!err) {
                 return res.json({ code: 0, msgs: doc, users: users })
